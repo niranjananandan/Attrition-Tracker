@@ -649,7 +649,7 @@ with st.sidebar:
         <a href="?action=logout" target="_self" style="display: flex; justify-content: center; align-items: center; background-color: #EF4444; color: #F8FAFC; border-radius: 8px; height: 40px; width: 100%; text-decoration: none; font-weight: bold; font-family: sans-serif; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">🚪 Sign Out</a>
         """, unsafe_allow_html=True)
     else:
-        profile_button_html = '<a href="#" target="_self" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; color: #F8FAFC; font-weight: bold; font-family: sans-serif; font-size: 16px; transition: border-color 0.3s;">P</a>'
+        profile_button_html = '<a href="#" target="_top" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; color: #F8FAFC; font-weight: bold; font-family: sans-serif; font-size: 16px; transition: border-color 0.3s;">P</a>'
         
         google_logo_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -665,10 +665,10 @@ with st.sidebar:
         sidebar_html = f"""
 <div style="display: flex; gap: 12px; justify-content: space-between; align-items: center; width: 100%; margin-top: 10px;">
 {profile_button_html}
-<a href="{google_auth_url}" target="_self" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; transition: border-color 0.3s;">
+<a href="{google_auth_url}" target="_top" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; transition: border-color 0.3s;">
 {google_logo_svg}
 </a>
-<a href="{github_auth_url}" target="_self" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; transition: border-color 0.3s;">
+<a href="{github_auth_url}" target="_top" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; transition: border-color 0.3s;">
 {github_logo_svg}
 </a>
 </div>
