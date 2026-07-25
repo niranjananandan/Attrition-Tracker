@@ -6,3 +6,4 @@ shap
 matplotlib
 python-dotenv
 google-generativeai
+plotly
