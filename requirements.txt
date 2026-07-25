@@ -7,3 +7,4 @@ matplotlib
 python-dotenv
 google-generativeai
 plotly
+firebase-admin
