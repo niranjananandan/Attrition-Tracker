@@ -12,22 +12,43 @@ import urllib.parse
 import datetime
 
 import os
+import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
 
-# Render-la secret files default-a /etc/secrets/ la ukkarum, illana root-la ukkarum
+# Render-la secret files default-a /etc/secrets/ la ukkarum
 firebase_key_path = "firebase-key.json"
 if not os.path.exists(firebase_key_path):
     firebase_key_path = "/etc/secrets/firebase-key.json"
 
 # Firebase initialize aagalana mattum initialize pannanum
 if not firebase_admin._apps:
+    if not os.path.exists(firebase_key_path):
+        st.error(f"⚠️ Firebase Key File Missing! Render-la indha path-la file illai: {firebase_key_path}")
+        st.stop() # File illana app-a stop pannidrom, appo thaan keela ulla error varathu
+    
     try:
         cred = credentials.Certificate(firebase_key_path)
         firebase_admin.initialize_app(cred)
     except Exception as e:
-        print(f"Firebase Init Error: {e}")
+        st.error(f"⚠️ Firebase Init Error: {e}")
+        st.stop()
+
+db = firestore.client()
+
+# Data-va database-kku anuppura function
+def log_user_login(name, email, provider):
+    try:
+        db.collection('user_logs').add({
+            'user_name': name,
+            'user_email': email,
+            'auth_provider': provider,
+            'login_time': datetime.now()
+        })
+        print(f"Data saved to Firebase for {name}")
+    except Exception as e:
+        print(f"Firebase database error: {e}")
 
 db = firestore.client()
 
