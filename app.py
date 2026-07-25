@@ -11,15 +11,23 @@ import requests
 import urllib.parse
 import datetime
 
+import os
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
 
+# Render-la secret files default-a /etc/secrets/ la ukkarum, illana root-la ukkarum
+firebase_key_path = "firebase-key.json"
+if not os.path.exists(firebase_key_path):
+    firebase_key_path = "/etc/secrets/firebase-key.json"
+
 # Firebase initialize aagalana mattum initialize pannanum
 if not firebase_admin._apps:
-    # Namma Render-la potta secret file name
-    cred = credentials.Certificate("firebase-key.json")
-    firebase_admin.initialize_app(cred)
+    try:
+        cred = credentials.Certificate(firebase_key_path)
+        firebase_admin.initialize_app(cred)
+    except Exception as e:
+        print(f"Firebase Init Error: {e}")
 
 db = firestore.client()
 
