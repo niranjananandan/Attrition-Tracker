@@ -65,7 +65,11 @@ def get_secret(key, default=""):
 # Resolve redirect URIs dynamically based on the current host header
 def get_dynamic_redirect_uri(default_uri):
     try:
-        host = st.context.headers.get("host")
+        # Prioritize x-forwarded-host to get the public facing hostname when running behind a reverse proxy (e.g. Streamlit Cloud)
+        host = st.context.headers.get("x-forwarded-host")
+        if not host:
+            host = st.context.headers.get("host")
+            
         if host:
             proto = "https"
             if "localhost" in host or "127.0.0.1" in host:
