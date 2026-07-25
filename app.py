@@ -62,14 +62,35 @@ def get_secret(key, default=""):
     except Exception:
         return default
 
+# Resolve redirect URIs dynamically based on the current host header
+def get_dynamic_redirect_uri(default_uri):
+    try:
+        host = st.context.headers.get("host")
+        if host:
+            proto = "https"
+            if "localhost" in host or "127.0.0.1" in host:
+                proto = "http"
+            else:
+                forwarded_proto = st.context.headers.get("x-forwarded-proto")
+                if forwarded_proto:
+                    proto = forwarded_proto.split(",")[0].strip()
+            return f"{proto}://{host}"
+    except Exception:
+        pass
+    return default_uri
+
+# Dynamically resolved redirect URIs
+DYNAMIC_REDIRECT_URI = get_dynamic_redirect_uri(REDIRECT_URI)
+DYNAMIC_GH_REDIRECT_URI = get_dynamic_redirect_uri(GH_REDIRECT_URI)
+
 def get_google_login_url():
     if not CLIENT_ID: return "#"
-    params = {"client_id": CLIENT_ID, "response_type": "code", "redirect_uri": REDIRECT_URI, "scope": "openid email profile", "state": "google"}
+    params = {"client_id": CLIENT_ID, "response_type": "code", "redirect_uri": DYNAMIC_REDIRECT_URI, "scope": "openid email profile", "state": "google"}
     return f"https://accounts.google.com/o/oauth2/v2/auth?{urllib.parse.urlencode(params)}"
 
 def get_github_login_url():
     if not GH_CLIENT_ID: return "#"
-    params = {"client_id": GH_CLIENT_ID, "redirect_uri": GH_REDIRECT_URI, "scope": "read:user user:email", "state": "github"}
+    params = {"client_id": GH_CLIENT_ID, "redirect_uri": DYNAMIC_GH_REDIRECT_URI, "scope": "read:user user:email", "state": "github"}
     return f"https://github.com/login/oauth/authorize?{urllib.parse.urlencode(params)}"
 
 # 2. OAUTH CALLBACK & LOGOUT HANDLER
@@ -98,7 +119,7 @@ if "code" in st.query_params and "state" in st.query_params:
             "code": auth_code,
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
-            "redirect_uri": REDIRECT_URI,
+            "redirect_uri": DYNAMIC_REDIRECT_URI,
             "grant_type": "authorization_code",
         }
         try:
@@ -121,7 +142,7 @@ if "code" in st.query_params and "state" in st.query_params:
         # GitHub Token Exchange
         gh_token_url = "https://github.com/login/oauth/access_token"
         gh_headers = {"Accept": "application/json"}
-        gh_data = {"client_id": GH_CLIENT_ID, "client_secret": GH_CLIENT_SECRET, "code": auth_code, "redirect_uri": GH_REDIRECT_URI}
+        gh_data = {"client_id": GH_CLIENT_ID, "client_secret": GH_CLIENT_SECRET, "code": auth_code, "redirect_uri": DYNAMIC_GH_REDIRECT_URI}
         try:
             gh_token_res = requests.post(gh_token_url, headers=gh_headers, data=gh_data)
             if gh_token_res.status_code == 200:
@@ -649,6 +670,14 @@ with st.sidebar:
         <a href="?action=logout" target="_self" style="display: flex; justify-content: center; align-items: center; background-color: #EF4444; color: #F8FAFC; border-radius: 8px; height: 40px; width: 100%; text-decoration: none; font-weight: bold; font-family: sans-serif; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">🚪 Sign Out</a>
         """, unsafe_allow_html=True)
     else:
+        if not CLIENT_ID or not GH_CLIENT_ID:
+            missing_providers = []
+            if not CLIENT_ID:
+                missing_providers.append("Google")
+            if not GH_CLIENT_ID:
+                missing_providers.append("GitHub")
+            st.sidebar.warning(f"⚠️ Missing OAuth credentials for: {', '.join(missing_providers)}. Please configure them in `.streamlit/secrets.toml`.")
+
         profile_button_html = '<a href="#" target="_top" style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #1E293B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; height: 40px; text-decoration: none; color: #F8FAFC; font-weight: bold; font-family: sans-serif; font-size: 16px; transition: border-color 0.3s;">P</a>'
         
         google_logo_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
