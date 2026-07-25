@@ -11,6 +11,28 @@ import requests
 import urllib.parse
 import datetime
 
+import os
+
+# .streamlit folder-a code moolama create panrom
+os.makedirs(".streamlit", exist_ok=True)
+
+# Render Environment variables-la irundhu keys eduthu format panrom
+secrets_content = f"""
+[google]
+client_id = "{os.environ.get('GOOGLE_CLIENT_ID', '')}"
+client_secret = "{os.environ.get('GOOGLE_CLIENT_SECRET', '')}"
+redirect_uri = "{os.environ.get('REDIRECT_URI', '')}"
+
+[github]
+client_id = "{os.environ.get('GITHUB_CLIENT_ID', '')}"
+client_secret = "{os.environ.get('GITHUB_CLIENT_SECRET', '')}"
+redirect_uri = "{os.environ.get('REDIRECT_URI', '')}"
+"""
+
+# Andha keys-a secrets.toml file-la ezhudhi save panrom
+with open(".streamlit/secrets.toml", "w") as f:
+    f.write(secrets_content)
+
 # Load environment variables
 load_dotenv()
 
