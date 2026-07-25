@@ -11,6 +11,32 @@ import requests
 import urllib.parse
 import datetime
 
+import firebase_admin
+from firebase_admin import credentials, firestore
+from datetime import datetime
+
+# Firebase initialize aagalana mattum initialize pannanum
+if not firebase_admin._apps:
+    # Namma Render-la potta secret file name
+    cred = credentials.Certificate("firebase-key.json")
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
+# Data-va database-kku anuppura function
+def log_user_login(name, email, provider):
+    try:
+        # 'user_logs' ngra collection-la puthu record create panrom
+        db.collection('user_logs').add({
+            'user_name': name,
+            'user_email': email,
+            'auth_provider': provider,
+            'login_time': datetime.now()
+        })
+        print(f"Data saved to Firebase for {name}")
+    except Exception as e:
+        print(f"Firebase database error: {e}")
+
 import os
 
 # .streamlit folder-a code moolama create panrom
@@ -161,6 +187,11 @@ if "code" in st.query_params and "state" in st.query_params:
                         "picture": user_data.get("picture"),
                         "login_time": datetime.datetime.now().strftime("%d %b %Y, %I:%M %p")
                     }
+                    log_user_login(
+    name=st.session_state['user_profile']["name"], 
+    email=st.session_state['user_profile']["email"], 
+    provider="Google"
+)
         except Exception as e:
             st.error(f"Google authentication failed: {str(e)}")
 
@@ -182,6 +213,11 @@ if "code" in st.query_params and "state" in st.query_params:
                         "picture": gh_user_data.get("avatar_url"),
                         "login_time": datetime.datetime.now().strftime("%d %b %Y, %I:%M %p")
                     }
+                    log_user_login(
+    name=st.session_state['user_profile']["name"], 
+    email=st.session_state['user_profile']["email"], 
+    provider="GitHub"
+)
         except Exception as e:
             st.error(f"GitHub authentication failed: {str(e)}")
 
