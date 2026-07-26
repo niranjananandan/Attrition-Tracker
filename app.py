@@ -100,6 +100,70 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Inject Custom CSS for Mobile Sidebar Toggle Button
+st.markdown(
+    """
+    <style>
+    /* ONLY apply these changes on mobile devices (screens smaller than 768px) */
+    @media (max-width: 768px) {
+        
+        /* 1. Hide the default Streamlit SVG chevron icon */
+        [data-testid="collapsedControl"] svg {
+            display: none !important;
+        }
+
+        /* 2. Transform the invisible control container into a premium floating button */
+        [data-testid="collapsedControl"] {
+            /* Position top-left */
+            top: 15px !important;
+            left: 15px !important;
+            
+            /* Override default dimensions */
+            height: auto !important;
+            width: auto !important;
+            padding: 8px 16px !important;
+            
+            /* Premium High-Contrast Dark Theme */
+            background-color: #1E1E2E !important;
+            border: 1px solid rgba(0, 229, 255, 0.4) !important;
+            border-radius: 8px !important;
+            
+            /* Subtle Neon Glow Effect */
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2), 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+            
+            /* Flexbox for text alignment */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            
+            /* Ensure it stays above other elements */
+            z-index: 999999 !important;
+            transition: all 0.25s ease !important;
+        }
+
+        /* 3. Hover state for better interactivity */
+        [data-testid="collapsedControl"]:hover {
+            background-color: #2A2A3E !important;
+            border: 1px solid rgba(0, 229, 255, 0.8) !important;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), 0 6px 8px rgba(0, 0, 0, 0.5) !important;
+            transform: scale(1.02);
+        }
+
+        /* 4. Inject the new "Filters >>" text */
+        [data-testid="collapsedControl"]::after {
+            content: "Filters ≫" !important;
+            color: #00e5ff !important;
+            font-weight: 600 !important;
+            font-family: 'Inter', 'Segoe UI', sans-serif !important;
+            font-size: 14px !important;
+            letter-spacing: 0.5px !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Inject the Trailing Follower Cursor
 components.html(
     """
