@@ -193,7 +193,7 @@ if "code" in st.query_params and "state" in st.query_params:
     auth_code = st.query_params["code"]
     auth_state = st.query_params["state"]
 
-    if auth_state == "google":
+   if auth_state == "google":
         token_url = "https://oauth2.googleapis.com/token"
         token_data = {
             "code": auth_code,
@@ -215,16 +215,20 @@ if "code" in st.query_params and "state" in st.query_params:
                         "picture": user_data.get("picture"),
                         "login_time": datetime.now().strftime("%d %b %Y, %I:%M %p")
                     }
+                    
                     log_user_login(
-    name=st.session_state['user_profile']["name"], 
-    email=st.session_state['user_profile']["email"], 
-    provider="Google"
-)
+                        name=st.session_state['user_profile']["name"], 
+                        email=st.session_state['user_profile']["email"], 
+                        provider="Google"
+                    )
+                else:
+                    st.error(f"Google User Info Error: {user_res.text}")
+            else:
+                st.error(f"Google Token Error: {token_res.text}")
         except Exception as e:
             st.error(f"Google authentication failed: {str(e)}")
 
     elif auth_state == "github":
-        # GitHub Token Exchange
         gh_token_url = "https://github.com/login/oauth/access_token"
         gh_headers = {"Accept": "application/json"}
         gh_data = {"client_id": GH_CLIENT_ID, "client_secret": GH_CLIENT_SECRET, "code": auth_code, "redirect_uri": DYNAMIC_GH_REDIRECT_URI}
