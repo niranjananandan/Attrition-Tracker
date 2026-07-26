@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
 import shap
@@ -97,6 +98,191 @@ st.set_page_config(
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
+)
+
+# Inject the Trailing Follower Cursor
+components.html(
+    """
+    <script>
+    (function() {
+      const STYLE_ID = 'st-custom-cursor-style';
+      const DOT_ID = 'st-custom-cursor-dot';
+      const FOLLOWER_ID = 'st-custom-cursor-follower';
+
+      let doc = document;
+      let isFrame = false;
+      try {
+        if (window.parent && window.parent.document) {
+          doc = window.parent.document;
+          isFrame = true;
+        }
+      } catch (e) {
+        console.warn("Cross-origin restrictions prevented access to parent document. Falling back to iframe.");
+      }
+
+      if (doc.getElementById(STYLE_ID)) return;
+
+      const style = doc.createElement('style');
+      style.id = STYLE_ID;
+      style.innerHTML = `
+        html, body, a, button, input, textarea, select, [role="button"], 
+        .stButton button, .stDownloadButton button, div[data-baseweb="select"] {
+          cursor: none !important;
+        }
+        
+        .custom-cursor-dot {
+          width: 6px;
+          height: 6px;
+          background-color: #00e5ff;
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 99999999;
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0;
+          transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        
+        .custom-cursor-follower {
+          width: 30px;
+          height: 30px;
+          border: 1.5px solid rgba(0, 229, 255, 0.8);
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 99999998;
+          transform: translate(-50%, -50%) scale(1);
+          background-color: rgba(0, 229, 255, 0);
+          opacity: 0;
+          transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.25s ease, border-color 0.25s ease, opacity 0.2s ease;
+        }
+      `;
+      doc.head.appendChild(style);
+
+      if (isFrame) {
+        const localStyle = document.createElement('style');
+        localStyle.innerHTML = `
+          html, body, a, button, input, textarea, select, [role="button"] {
+            cursor: none !important;
+          }
+        `;
+        document.head.appendChild(localStyle);
+      }
+
+      const dot = doc.createElement('div');
+      dot.id = DOT_ID;
+      dot.className = 'custom-cursor-dot';
+
+      const follower = doc.createElement('div');
+      follower.id = FOLLOWER_ID;
+      follower.className = 'custom-cursor-follower';
+
+      doc.body.appendChild(dot);
+      doc.body.appendChild(follower);
+
+      let mouseX = 0;
+      let mouseY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let dotX = 0;
+      let dotY = 0;
+      let isVisible = false;
+      const ease = 0.15;
+
+      function updateCoordinates(e) {
+        let x = e.clientX;
+        let y = e.clientY;
+
+        if (e.currentTarget === document) {
+          try {
+            const iframes = doc.getElementsByTagName('iframe');
+            let myIframe = null;
+            for (let i = 0; i < iframes.length; i++) {
+              if (iframes[i].contentDocument === document || iframes[i].contentWindow === window) {
+                myIframe = iframes[i];
+                break;
+              }
+            }
+            if (myIframe) {
+              const rect = myIframe.getBoundingClientRect();
+              x += rect.left;
+              y += rect.top;
+            }
+          } catch (err) {}
+        }
+
+        mouseX = x;
+        mouseY = y;
+
+        if (!isVisible) {
+          isVisible = true;
+          dot.style.opacity = '1';
+          follower.style.opacity = '1';
+          currentX = dotX = mouseX;
+          currentY = dotY = mouseY;
+        }
+      }
+
+      doc.addEventListener('mousemove', updateCoordinates);
+      if (isFrame) document.addEventListener('mousemove', updateCoordinates);
+
+      function render() {
+        if (isVisible) {
+          dotX += (mouseX - dotX) * 0.8;
+          dotY += (mouseY - dotY) * 0.8;
+          dot.style.left = dotX + 'px';
+          dot.style.top = dotY + 'px';
+
+          currentX += (mouseX - currentX) * ease;
+          currentY += (mouseY - currentY) * ease;
+          follower.style.left = currentX + 'px';
+          follower.style.top = currentY + 'px';
+        }
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+
+      const handleMouseLeave = () => {
+        dot.style.opacity = '0';
+        follower.style.opacity = '0';
+        isVisible = false;
+      };
+      doc.addEventListener('mouseleave', handleMouseLeave);
+      if (isFrame) document.addEventListener('mouseleave', handleMouseLeave);
+
+      const clickableSelector = 'a, button, input, select, textarea, [role="button"], .stButton button, .stDownloadButton button, div[data-baseweb="select"]';
+      
+      function handleHoverStart(e) {
+        const target = e.target.closest(clickableSelector);
+        if (target) {
+          follower.style.transform = 'translate(-50%, -50%) scale(1.6)';
+          follower.style.backgroundColor = 'rgba(0, 229, 255, 0.15)';
+          follower.style.borderColor = 'rgba(0, 229, 255, 1)';
+          dot.style.transform = 'translate(-50%, -50%) scale(0)';
+        }
+      }
+
+      function handleHoverEnd(e) {
+        const target = e.target.closest(clickableSelector);
+        if (target) {
+          follower.style.transform = 'translate(-50%, -50%) scale(1)';
+          follower.style.backgroundColor = 'rgba(0, 229, 255, 0)';
+          follower.style.borderColor = 'rgba(0, 229, 255, 0.8)';
+          dot.style.transform = 'translate(-50%, -50%) scale(1)';
+        }
+      }
+
+      doc.addEventListener('mouseover', handleHoverStart);
+      doc.addEventListener('mouseout', handleHoverEnd);
+      if (isFrame) {
+        document.addEventListener('mouseover', handleHoverStart);
+        document.addEventListener('mouseout', handleHoverEnd);
+      }
+    })();
+    </script>
+    """,
+    height=0,
+    width=0
 )
 
 # Initialize session state for user profile
