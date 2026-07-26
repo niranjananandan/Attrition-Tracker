@@ -23,11 +23,14 @@ firebase_key_path = "firebase-key.json"
 if not os.path.exists(firebase_key_path):
     firebase_key_path = "/etc/secrets/firebase-key.json"
 
-# Firebase initialize aagalana mattum initialize pannanum
-if not firebase_admin._apps:
+# Firebase already initialize aagirukka nu check panrom (100% Fail-proof method)
+try:
+    firebase_admin.get_app()
+except ValueError:
+    # App illana mattum puthusa initialize pannum
     if not os.path.exists(firebase_key_path):
         st.error(f"⚠️ Firebase Key File Missing! Render-la indha path-la file illai: {firebase_key_path}")
-        st.stop() # File illana app-a stop pannidrom, appo thaan keela ulla error varathu
+        st.stop()
     
     try:
         cred = credentials.Certificate(firebase_key_path)
@@ -35,22 +38,6 @@ if not firebase_admin._apps:
     except Exception as e:
         st.error(f"⚠️ Firebase Init Error: {e}")
         st.stop()
-
-db = firestore.client()
-
-# Data-va database-kku anuppura function
-def log_user_login(name, email, provider):
-    try:
-        db.collection('user_logs').add({
-            'user_name': name,
-            'user_email': email,
-            'auth_provider': provider,
-            'login_time': datetime.now()
-        })
-        print(f"Data saved to Firebase for {name}")
-    except Exception as e:
-        print(f"Firebase database error: {e}")
-
 db = firestore.client()
 
 # Data-va database-kku anuppura function
