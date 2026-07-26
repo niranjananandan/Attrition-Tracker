@@ -193,7 +193,7 @@ if "code" in st.query_params and "state" in st.query_params:
     auth_code = st.query_params["code"]
     auth_state = st.query_params["state"]
 
-   if auth_state == "google":
+    if auth_state == "google":
         token_url = "https://oauth2.googleapis.com/token"
         token_data = {
             "code": auth_code,
