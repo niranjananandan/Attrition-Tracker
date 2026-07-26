@@ -213,7 +213,7 @@ if "code" in st.query_params and "state" in st.query_params:
                         "name": user_data.get("name") or "Authenticated User",
                         "email": user_data.get("email") or "No email provided",
                         "picture": user_data.get("picture"),
-                        "login_time": datetime.datetime.now().strftime("%d %b %Y, %I:%M %p")
+                        "login_time": datetime.now().strftime("%d %b %Y, %I:%M %p")
                     }
                     log_user_login(
     name=st.session_state['user_profile']["name"], 
@@ -239,7 +239,7 @@ if "code" in st.query_params and "state" in st.query_params:
                         "name": gh_user_data.get("name") or gh_user_data.get("login") or "Authenticated User",
                         "email": gh_user_data.get("email") or "No email provided",
                         "picture": gh_user_data.get("avatar_url"),
-                        "login_time": datetime.datetime.now().strftime("%d %b %Y, %I:%M %p")
+                       "login_time": datetime.now().strftime("%d %b %Y, %I:%M %p")
                     }
                     log_user_login(
     name=st.session_state['user_profile']["name"], 
