@@ -160,9 +160,8 @@ def get_dynamic_redirect_uri(default_uri):
         pass
     return default_uri
 
-# Dynamically resolved redirect URIs
-DYNAMIC_REDIRECT_URI = get_dynamic_redirect_uri(REDIRECT_URI)
-DYNAMIC_GH_REDIRECT_URI = get_dynamic_redirect_uri(GH_REDIRECT_URI)
+DYNAMIC_REDIRECT_URI = REDIRECT_URI
+DYNAMIC_GH_REDIRECT_URI = GH_REDIRECT_URI
 
 def get_google_login_url():
     if not CLIENT_ID: return "#"
@@ -250,8 +249,12 @@ if "code" in st.query_params and "state" in st.query_params:
         except Exception as e:
             st.error(f"GitHub authentication failed: {str(e)}")
 
-    st.query_params.clear()
-    st.rerun()
+    if st.session_state.get('user_profile'):
+        st.query_params.clear()
+        st.rerun()
+    else:
+        st.error("⚠️ Authentication failed! Google Cloud Console / Render-la Client Secret miss aagirukka nu check pannunga.")
+        st.stop()
 
 if 'is_authenticated' not in st.session_state:
     st.session_state.is_authenticated = False
