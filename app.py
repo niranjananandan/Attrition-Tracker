@@ -723,6 +723,91 @@ st.markdown("""
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* 
+     * CRITICAL REQUIREMENT: 
+     * Everything is wrapped in this media query so it strictly affects ONLY mobile screens (max-width: 768px).
+     * Desktop view remains completely untouched.
+     */
+    @media (max-width: 768px) {
+        
+        /* 4. Spacing: Add comfortable padding so content doesn't touch edges */
+        /* 1. Alignment Correction: Force the main container to center everything */
+        .block-container {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            padding-top: 32px !important;
+            padding-bottom: 32px !important;
+            
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+        }
+
+        /* Ensure sub-containers take full width but keep their contents centered */
+        .block-container > div {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        /* Globally force text centering for markdown, headers, and standard text elements */
+        .stMarkdown, 
+        .stText, 
+        [data-testid="stMarkdownContainer"] p, 
+        [data-testid="stMarkdownContainer"] h1, 
+        [data-testid="stMarkdownContainer"] h2, 
+        [data-testid="stMarkdownContainer"] h3 {
+            text-align: center !important;
+        }
+
+        /* 3. Styling Details: Center the button's outer container */
+        .stButton {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+            padding: 8px 0 !important;
+        }
+
+        /* 2. Premium UI & 3. Styling Details: Apple-style dark theme button with rounded borders */
+        .stButton > button {
+            /* Prevent awkward full-screen stretching */
+            width: auto !important;
+            min-width: 200px !important;
+            max-width: 90% !important;
+            
+            /* Smooth pill-like rounded borders */
+            border-radius: 24px !important; 
+            
+            /* High-contrast Apple-style dark theme aesthetics */
+            background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid #38383a !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            
+            padding: 12px 24px !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.5px !important;
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+        }
+
+        /* Premium interaction hover state */
+        .stButton > button:hover {
+            background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%) !important;
+            border-color: #48484a !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Premium interaction active/click state */
+        .stButton > button:active {
+            transform: translateY(1px) scale(0.97) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
