@@ -84,7 +84,7 @@ st.set_page_config(
     page_title="Attrition Tracker",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
 
@@ -670,7 +670,7 @@ st.markdown("""
     @media (max-width: 768px) {
         
         /* 1. Restore Sidebar Toggle & 2. Premium Button Styling */
-        [data-testid="collapsedControl"] {
+        [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] {
             display: flex !important;
             position: fixed !important;
             top: 15px !important;
@@ -696,7 +696,7 @@ st.markdown("""
         }
         
         /* Ensure the icon inside the toggle is clearly visible */
-        [data-testid="collapsedControl"] svg {
+        [data-testid="collapsedControl"] svg, [data-testid="stSidebarCollapsedControl"] svg {
             fill: #ffffff !important;
             color: #ffffff !important;
             display: block !important;
