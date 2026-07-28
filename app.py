@@ -87,69 +87,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inject Custom CSS for Mobile Sidebar Toggle Button
-st.markdown(
-    """
-    <style>
-    /* ONLY apply these changes on mobile devices (screens smaller than 768px) */
-    @media (max-width: 768px) {
-        
-        /* 1. Hide the default Streamlit SVG chevron icon */
-        [data-testid="collapsedControl"] svg {
-            display: none !important;
-        }
 
-        /* 2. Transform the invisible control container into a premium floating button */
-        [data-testid="collapsedControl"] {
-            /* Position top-left */
-            top: 15px !important;
-            left: 15px !important;
-            
-            /* Override default dimensions */
-            height: auto !important;
-            width: auto !important;
-            padding: 8px 16px !important;
-            
-            /* Premium High-Contrast Dark Theme */
-            background-color: #1E1E2E !important;
-            border: 1px solid rgba(0, 229, 255, 0.4) !important;
-            border-radius: 8px !important;
-            
-            /* Subtle Neon Glow Effect */
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2), 0 4px 6px rgba(0, 0, 0, 0.4) !important;
-            
-            /* Flexbox for text alignment */
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            
-            /* Ensure it stays above other elements */
-            z-index: 999999 !important;
-            transition: all 0.25s ease !important;
-        }
-
-        /* 3. Hover state for better interactivity */
-        [data-testid="collapsedControl"]:hover {
-            background-color: #2A2A3E !important;
-            border: 1px solid rgba(0, 229, 255, 0.8) !important;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), 0 6px 8px rgba(0, 0, 0, 0.5) !important;
-            transform: scale(1.02);
-        }
-
-        /* 4. Inject the new "Filters >>" text */
-        [data-testid="collapsedControl"]::after {
-            content: "Filters ≫" !important;
-            color: #00e5ff !important;
-            font-weight: 600 !important;
-            font-family: 'Inter', 'Segoe UI', sans-serif !important;
-            font-size: 14px !important;
-            letter-spacing: 0.5px !important;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 # Inject the Trailing Follower Cursor
 components.html(
@@ -725,18 +663,51 @@ st.markdown("""
     }
 
     /* 
-     * CRITICAL REQUIREMENT: 
-     * Everything is wrapped in this media query so it strictly affects ONLY mobile screens (max-width: 768px).
-     * Desktop view remains completely untouched.
+     * CRITICAL: 
+     * All rules are strictly scoped to mobile screens (max-width: 768px). 
+     * Desktop view remains 100% untouched.
      */
     @media (max-width: 768px) {
         
-        /* 4. Spacing: Add comfortable padding so content doesn't touch edges */
-        /* 1. Alignment Correction: Force the main container to center everything */
+        /* 1. Restore Sidebar Toggle & 2. Premium Button Styling */
+        [data-testid="collapsedControl"] {
+            display: flex !important;
+            position: fixed !important;
+            top: 15px !important;
+            left: 15px !important;
+            z-index: 99999 !important;
+            
+            /* Apple-style minimalist dark theme */
+            background: rgba(28, 28, 30, 0.85) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 12px !important;
+            padding: 8px 14px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+            transition: background 0.2s ease !important;
+            
+            align-items: center !important;
+            justify-content: center !important;
+            
+            /* Override Streamlit's default dimensions if necessary */
+            height: auto !important;
+            width: auto !important;
+        }
+        
+        /* Ensure the icon inside the toggle is clearly visible */
+        [data-testid="collapsedControl"] svg {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+            display: block !important;
+        }
+        
+        /* 3. Prevent Overlap & 4. Keep Centered Alignment */
         .block-container {
+            /* Push main content down so it is not hidden under the top edge or fixed toggle */
+            padding-top: 5rem !important;
             padding-left: 24px !important;
             padding-right: 24px !important;
-            padding-top: 32px !important;
             padding-bottom: 32px !important;
             
             display: flex !important;
@@ -763,7 +734,7 @@ st.markdown("""
             text-align: center !important;
         }
 
-        /* 3. Styling Details: Center the button's outer container */
+        /* Center the button's outer container */
         .stButton {
             display: flex !important;
             justify-content: center !important;
@@ -771,17 +742,13 @@ st.markdown("""
             padding: 8px 0 !important;
         }
 
-        /* 2. Premium UI & 3. Styling Details: Apple-style dark theme button with rounded borders */
+        /* Premium UI for main buttons with rounded borders (Maintaining previous styles) */
         .stButton > button {
-            /* Prevent awkward full-screen stretching */
             width: auto !important;
             min-width: 200px !important;
             max-width: 90% !important;
-            
-            /* Smooth pill-like rounded borders */
             border-radius: 24px !important; 
             
-            /* High-contrast Apple-style dark theme aesthetics */
             background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%) !important;
             color: #ffffff !important;
             border: 1px solid #38383a !important;
@@ -794,7 +761,6 @@ st.markdown("""
             transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
         }
 
-        /* Premium interaction hover state */
         .stButton > button:hover {
             background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%) !important;
             border-color: #48484a !important;
@@ -802,7 +768,6 @@ st.markdown("""
             transform: translateY(-1px) !important;
         }
 
-        /* Premium interaction active/click state */
         .stButton > button:active {
             transform: translateY(1px) scale(0.97) !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
