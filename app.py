@@ -1090,8 +1090,6 @@ with st.sidebar:
         st.markdown(sidebar_html, unsafe_allow_html=True)
 
 if not user_profile:
-    # Inject mobile-only full-screen login overlay
-    # This renders a popup sign in page exclusively for mobile layouts
     mobile_login_overlay = f"""
     <style>
     .mobile-login-overlay {{
@@ -1117,9 +1115,9 @@ if not user_profile:
         [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] {{
             display: none !important;
         }}
-        /* Hide the main app content so they can't scroll underneath */
-        .block-container {{
-            display: none !important;
+        /* Prevent scrolling underneath the overlay */
+        body {{
+            overflow: hidden !important;
         }}
     }}
     </style>
