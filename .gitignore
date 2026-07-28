@@ -1,5 +1,13 @@
-.streamlit/secrets.toml
+# Security (NEVER UPLOAD THESE)
+firebase-key.json
 .env
+secrets.toml
+
+# Python Virtual Environment
+venv/
+env/
 __pycache__/
 *.pyc
-venv/
+
+# Streamlit specifics
+.streamlit/
